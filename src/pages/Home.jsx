@@ -1,56 +1,65 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchInstruments, setItemDetail, clearDetail } from "../features/instruments/instrumentsSlice";
+import "./Home.css";
 
 const Home = () => {
-    const theme = useSelector(state => state.ui.theme)
-    const cars = useSelector(state => state.ui.cars) // Получаем машины из Store
+    const dispatch = useDispatch();
+    const theme = useSelector(state => state.ui.theme);
+    const { items, status, selectedItem } = useSelector(state => state.instruments);
+
+    useEffect(() => {
+        if (status === "idle") dispatch(fetchInstruments());
+    }, [status, dispatch]);
+
+    // Detail View (Одиночная карточка)
+    if (selectedItem) {
+        return (
+            <div className={`home-container ${theme} detail-view`} style={{padding: '100px 8%'}}>
+                <button className="card-link" style={{background: 'none', border: 'none', cursor: 'pointer', color: '#0066b1'}} onClick={() => dispatch(clearDetail())}>
+                    ← НАЗАД К ОБЗОРУ
+                </button>
+                <h1 className="hero-title" style={{fontSize: '80px'}}>{selectedItem.title}</h1>
+                <p className="hero-subtitle">{selectedItem.specs}</p>
+                <p style={{maxWidth: '700px', lineHeight: '1.8'}}>{selectedItem.body}</p>
+            </div>
+        );
+    }
 
     return (
-        <main style={{
-            padding: "40px",
-            minHeight: "80vh",
-            background: theme === "light" ? "#f5f5f5" : "#1a1a1a",
-            color: theme === 'light' ? "#000" : "#fff",
-            transition: "0.3s"
-        }}>
+        <main className={`home-container ${theme}`}>
+            <section className="hero-banner">
+                <div className="hero-content">
+                    <span className="hero-label">T H E</span>
+                    <h1 className="hero-title">i5</h1>
+                    <p className="hero-subtitle">100% электрический. 100% BMW.</p>
+                    <button className="bmw-action-btn">Узнать больше</button>
+                </div>
+            </section>
 
-            <h2 style={{ borderLeft: "5px solid #0066b1", paddingLeft: "15px" }}>
-                Актуальный модельный ряд BMW
-            </h2>
-            
-            <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                gap: "20px",
-                marginTop: "30px"
-            }}>
-                {cars.map(car => (
-                    <div key={car.id} style={{
-                        padding: "20px",
-                        borderRadius: "12px",
-                        background: theme === "light" ? "#fff" : "#2d2d2d",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                        border: theme === "dark" ? "1px solid #444" : "none"
-                    }}>
-                        <h3 style={{ color: "#0066b1", margin: "0 0 10px 0" }}>{car.model}</h3>
-                        <p><strong>Год:</strong> {car.year}</p>
-                        <p style={{ fontSize: "14px", opacity: 0.8 }}>{car.specs}</p>
-                        <button style={{
-                            marginTop: "10px",
-                            padding: "8px 16px",
-                            background: "#0066b1",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "4px",
-                            cursor: "pointer"
-                        }}>
-                            Подробнее
-                        </button>
+            <section className="models-section">
+                <h2 className="section-header">Выберите свой BMW</h2>
+                
+                {status === "loading" ? (
+                    <div style={{textAlign: 'center', padding: '50px', fontSize: '20px', letterSpacing: '2px'}}>
+                        ЗАГРУЗКА...
                     </div>
-                ))}
-            </div>
-
+                ) : (
+                    <div className="models-grid">
+                        {items.map(car => (
+                            <div key={car.id} className="model-card" onClick={() => dispatch(setItemDetail(car))}>
+                                <div>
+                                    <h3 className="card-title">{car.title}</h3>
+                                    <p className="card-specs">{car.specs}</p>
+                                </div>
+                                <div className="card-link">Подробнее →</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </section>
         </main>
-    )
-}
+    );
+};
 
-export default Home
+export default Home;
