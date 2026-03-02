@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Используем fetch вместо axios
 export const fetchInstruments = createAsyncThunk(
     "instruments/fetchInstruments",
     async () => {
@@ -32,6 +31,25 @@ const instrumentsSlice = createSlice({
         },
         clearDetail: (state) => { 
             state.selectedItem = null; 
+        },
+        // CREATE
+        addInstrument: (state, action) => {
+            state.items.unshift(action.payload);
+        },
+        // DELETE
+        deleteInstrument: (state, action) => {
+            state.items = state.items.filter(item => item.id !== action.payload);
+            if (state.selectedItem?.id === action.payload) state.selectedItem = null;
+        },
+        // UPDATE
+        updateInstrument: (state, action) => {
+            const index = state.items.findIndex(item => item.id === action.payload.id);
+            if (index !== -1) {
+                state.items[index].title = action.payload.title;
+                if (state.selectedItem?.id === action.payload.id) {
+                    state.selectedItem.title = action.payload.title;
+                }
+            }
         }
     },
     extraReducers: (builder) => {
@@ -46,5 +64,12 @@ const instrumentsSlice = createSlice({
     }
 });
 
-export const { setItemDetail, clearDetail } = instrumentsSlice.actions;
+export const { 
+    setItemDetail, 
+    clearDetail, 
+    addInstrument, 
+    deleteInstrument, 
+    updateInstrument 
+} = instrumentsSlice.actions;
+
 export default instrumentsSlice.reducer;

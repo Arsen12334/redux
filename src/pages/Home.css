@@ -96,3 +96,105 @@
 .card-title { font-size: 26px; color: var(--bmw-blue); margin: 0; }
 .card-specs { font-size: 14px; opacity: 0.6; margin-top: 10px; }
 .card-link { font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+/* --- Глобальные стили для секции моделей --- */
+.models-section {
+    padding: 0 8% 100px;
+}
+
+.section-header {
+    font-size: 32px;
+    font-weight: 300; /* Легкий шрифт в стиле BMW */
+    border-left: 4px solid #0066b1;
+    padding-left: 20px;
+    margin-bottom: 40px;
+    color: #262626;
+    letter-spacing: 1px;
+}
+
+/* --- Сетка карточек --- */
+.models-grid {
+    display: grid;
+    /* Автоматическое количество колонок, минимум 280px */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 30px; /* Увеличили отступ между карточками */
+}
+
+/* --- Стиль Самой Карточки (Premium Look) --- */
+.model-card {
+    background: #ffffff;
+    border-radius: 8px; /* Скругленные углы */
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease; /* Плавная анимация при наведении */
+    
+    /* Легкая, элегантная тень */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+    border: 1px solid transparent; /* Для эффекта при наведении */
+}
+
+/* Эффект при наведении на карточку */
+.model-card:hover {
+    transform: translateY(-5px); /* Карточка немного приподнимается */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Тень становится глубже */
+    border-color: #eee;
+}
+
+/* --- Типографика внутри карточки --- */
+.card-title {
+    margin: 0 0 10px 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #262626;
+    line-height: 1.2;
+}
+
+.card-specs {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    letter-spacing: 0.5px;
+}
+
+/* --- Блок кнопок управления --- */
+.card-actions {
+    display: flex;
+    justify-content: space-between; /* Кнопки по разным сторонам */
+    align-items: center;
+    border-top: 1px solid #eee; /* Разделительная линия */
+    padding-top: 20px;
+    margin-top: auto; /* Прижимает блок к низу */
+}
+
+/* Общий стиль для кнопок-ссылок */
+.action-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+/* Кнопка УДАЛИТЬ */
+.delete-btn {
+    color: #888; /* Изначально серая, чтобы не отвлекать */
+}
+
+.delete-btn:hover {
+    color: #ff4d4d; /* Краснеет при наведении */
+}
+
+/* Кнопка ДЕТАЛИ */
+.details-link {
+    color: #0066b1; /* Фирменный синий BMW */
+}
+
+.details-link:hover {
+    color: #004a80; /* Темнеет при наведении */
+}
