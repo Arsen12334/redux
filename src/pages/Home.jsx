@@ -15,7 +15,6 @@ const Home = () => {
     const theme = useSelector(state => state.ui.theme);
     const { items, status, selectedItem } = useSelector(state => state.instruments);
 
-    // Состояния для полей ввода (Create)
     const [title, setTitle] = useState("");
     const [engine, setEngine] = useState("");
     const [power, setPower] = useState("");
@@ -31,7 +30,7 @@ const Home = () => {
         const newCar = {
             id: Date.now(),
             title: title,
-            specs: `Engine: ${engine || "Electric"} / Power: ${power || "500"} hp`,
+            specs: `${engine || "Electric"} / ${power || "500"} hp`,
             body: "Новая модель добавлена в конфигуратор BMW."
         };
 
@@ -42,7 +41,6 @@ const Home = () => {
         setPower("");
     };
 
-    // Функция для редактирования (Update)
     const handleEdit = (car) => {
         const newTitle = prompt("Введите новое название модели:", car.title);
         if (newTitle && newTitle.trim()) {
@@ -60,9 +58,17 @@ const Home = () => {
                 >
                     ← НАЗАД К ОБЗОРУ
                 </button>
-                <h1 className="hero-title" style={{fontSize: '80px', margin: '20px 0'}}>{selectedItem.title}</h1>
-                <p className="hero-subtitle" style={{fontSize: '24px', color: '#666'}}>{selectedItem.specs}</p>
-                <p style={{maxWidth: '700px', lineHeight: '1.8', marginTop: '30px'}}>{selectedItem.body}</p>
+                <div className="detail-content" style={{display: 'flex', gap: '50px', alignItems: 'center', flexWrap: 'wrap'}}>
+                    <div style={{flex: '1', minWidth: '300px'}}>
+                        <h1 className="hero-title" style={{fontSize: '60px', margin: '10px 0'}}>{selectedItem.title}</h1>
+                        <p className="hero-subtitle" style={{fontSize: '24px', color: '#666'}}>{selectedItem.specs}</p>
+                        <p style={{maxWidth: '600px', lineHeight: '1.8', marginTop: '30px'}}>{selectedItem.body}</p>
+                    </div>
+                    {/* Фото в детальном просмотре */}
+                    <div style={{flex: '1', minWidth: '300px'}}>
+                        <img src={selectedItem.img} alt={selectedItem.title} style={{width: '100%', height: 'auto', objectFit: 'contain'}} />
+                    </div>
+                </div>
             </div>
         );
     }
@@ -78,13 +84,11 @@ const Home = () => {
             <section className="models-section">
                 <h2 className="section-header">Конфигуратор новых моделей</h2>
 
-                {/* ФОРМА CRUD */}
                 <form onSubmit={handleAdd} className="crud-form" style={{
                     display: 'flex', 
                     flexWrap: 'wrap', 
                     gap: '15px', 
                     marginBottom: '60px',
-                    background: '#f8f8f8',
                     padding: '30px',
                     borderRadius: '8px'
                 }}>
@@ -93,30 +97,23 @@ const Home = () => {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="Название (напр. BMW M8)"
-                        style={{padding: '12px', flex: '1', minWidth: '200px', border: '1px solid #ddd'}}
+                        style={{padding: '12px', flex: '1', minWidth: '200px'}}
                     />
                     <input 
                         className="bmw-input"
                         value={engine}
                         onChange={(e) => setEngine(e.target.value)}
                         placeholder="Двигатель (Electric/V8)"
-                        style={{padding: '12px', flex: '1', minWidth: '200px', border: '1px solid #ddd'}}
+                        style={{padding: '12px', flex: '1', minWidth: '200px'}}
                     />
                     <input 
                         className="bmw-input"
                         value={power}
                         onChange={(e) => setPower(e.target.value)}
                         placeholder="Мощность (hp)"
-                        style={{padding: '12px', width: '130px', border: '1px solid #ddd'}}
+                        style={{padding: '12px', width: '130px'}}
                     />
-                    <button type="submit" className="bmw-action-btn" style={{
-                        padding: '12px 40px', 
-                        background: '#0066b1', 
-                        color: '#fff', 
-                        border: 'none', 
-                        cursor: 'pointer',
-                        fontWeight: '600'
-                    }}>
+                    <button type="submit" className="bmw-action-btn">
                         СОЗДАТЬ
                     </button>
                 </form>
@@ -128,6 +125,10 @@ const Home = () => {
                         {items.map(car => (
                             <div key={car.id} className="model-card">
                                 <div onClick={() => dispatch(setItemDetail(car))} style={{cursor: 'pointer'}}>
+                                    {/* Блок с изображением */}
+                                    <div className="card-image-container">
+                                        <img src={car.img} alt={car.title} className="card-car-image" />
+                                    </div>
                                     <h3 className="card-title">{car.title}</h3>
                                     <p className="card-specs">{car.specs}</p>
                                 </div>

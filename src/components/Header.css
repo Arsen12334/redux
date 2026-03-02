@@ -1,95 +1,127 @@
-/* Header.css */
+/* Header.css - BMW Digital Presence */
 .bmw-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 40px;
-    height: 60px;
+    padding: 0 5%;
+    height: 72px; /* Чуть выше для статусности */
     position: sticky;
     top: 0;
     z-index: 1000;
-    font-family: 'Arial', sans-serif;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    /* Эффект матового стекла */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 }
 
-/* Стили для светлой и темной темы на основе вашего uiSlice */
+/* Адаптация под темы */
 .bmw-header.light {
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(255, 255, 255, 0.8);
     color: #000;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .bmw-header.dark {
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(6, 6, 6, 0.8);
     color: #fff;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .header-left {
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 45px;
 }
 
-.bmw-logo {
-    width: 45px;
-    height: 45px;
-    cursor: pointer;
-}
-
-.nav-menu {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    gap: 20px;
-}
-
-.nav-link {
-    font-size: 13px;
-    font-weight: 500;
-    text-transform: none;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.nav-link:hover {
-    color: #0066b1; /* Фирменный синий цвет BMW */
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.theme-btn {
-    background: transparent;
-    border: 1px solid currentColor;
-    color: inherit;
-    padding: 5px 12px;
-    font-size: 11px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 2px;
-}
-/* Стили для контейнера логотипа */
+/* Логотип с мягким свечением */
 .bmw-logo-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 50px; /* Размер логотипа */
-    height: 50px;
+    filter: drop-shadow(0 0 0px rgba(0, 102, 177, 0));
+    transition: filter 0.3s ease;
+}
+
+.bmw-logo-container:hover {
+    filter: drop-shadow(0 0 8px rgba(0, 102, 177, 0.3));
 }
 
 .bmw-logo-img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    cursor: pointer;
-    transition: transform 0.3s ease;
+    width: 48px;
+    height: 48px;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .bmw-logo-img:hover {
-    transform: scale(1.1); /* Легкий эффект увеличения при наведении */
+    transform: rotate(360deg) scale(1.1); /* "Живой" поворот лого */
+}
+
+/* Навигация с кастомным индикатором */
+.nav-menu {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+}
+
+.nav-link {
+    position: relative;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    padding: 5px 0;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.nav-link:hover {
+    opacity: 1;
+}
+
+/* Тонкая линия подчеркивания в стиле BMW i */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #0066b1;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Креативная кнопка переключения темы */
+.theme-btn {
+    background: transparent;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    color: inherit;
+    padding: 8px 18px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.theme-btn:hover {
+    border-color: #0066b1;
+    background: #0066b1;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(0, 102, 177, 0.4);
+}
+
+.theme-btn:active {
+    transform: scale(0.95);
+}
+
+/* Правая часть с акцентом на минимализм */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }

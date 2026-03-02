@@ -1,20 +1,41 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+// База данных с реальными изображениями BMW для сопоставления по ID
+const bmwAssets = {
+    1: { title: "BMW i4 eDrive40", img: "https://www.bmw.ru/content/dam/bmw/common/all-models/i-series/i4/2021/navigation/bmw-i4-eDrive40-snapshot-l.png", specs: "Electric / 340 hp" },
+    2: { title: "BMW iX xDrive50", img: "https://www.bmw.ru/content/dam/bmw/common/all-models/i-series/ix/2021/navigation/bmw-ix-xDrive50-snapshot-l.png", specs: "Electric / 523 hp" },
+    3: { title: "BMW 3 Series Sedan", img: "https://www.bmw.ru/content/dam/bmw/common/all-models/3-series/sedan/2022/navigation/bmw-3-series-sedan-snapshot-l.png", specs: "Petrol / 184 hp" },
+    4: { title: "BMW 5 Series Sedan", img: "https://www.bmw.ru/content/dam/bmw/common/all-models/5-series/sedan/2023/navigation/bmw-5-series-sedan-snapshot-l.png", specs: "Petrol / 208 hp" },
+    5: { title: "BMW 7 Series Sedan", img: "https://www.bmw.ru/content/dam/bmw/common/all-models/7-series/7-series-protection/navigation/bmw-7-series-sedan-snapshot-l.png", specs: "Petrol / 530 hp" },
+    6: { title: "BMW X5 xDrive40i", img: "https://www.bmw.ru/content/dam/bmw/common/all-models/x-series/x5/2023/navigation/bmw-x5-snapshot-l.png", specs: "Petrol / 381 hp" },
+    7: { title: "BMW X7 M60i", img: "https://www.bmw.ru/content/dam/bmw/common/all-models/x-series/x7/2022/navigation/bmw-x7-snapshot-l.png", specs: "Petrol / 530 hp" },
+    8: { title: "BMW M4 Coupe", img: "https://www.bmw.ru/content/dam/bmw/common/all-models/m-series/m4-coupe/2020/navigation/bmw-m4-coupe-snapshot-l.png", specs: "Petrol / 510 hp" },
+};
+
 export const fetchInstruments = createAsyncThunk(
     "instruments/fetchInstruments",
     async () => {
         const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=8");
         const data = await response.json();
         
-        // Имитируем задержку 2 секунды по ТЗ
         await new Promise((resolve) => setTimeout(resolve, 2000));
         
-        return data.map(item => ({
-            id: item.id,
-            title: `BMW Series ${item.id} Concept`,
-            body: item.body,
-            specs: "Engine: Electric / Power: 544 hp"
-        }));
+        return data.map(item => {
+            // Берем данные из bmwAssets по ID, если их нет — ставим дефолт
+            const asset = bmwAssets[item.id] || { 
+                title: `BMW Series ${item.id}`, 
+                img: "https://www.bmw.ru/content/dam/bmw/common/all-models/i-series/i7/2022/navigation/bmw-i7-sedan-snapshot-l.png",
+                specs: "Engine: Electric / Power: 544 hp" 
+            };
+
+            return {
+                id: item.id,
+                title: asset.title,
+                img: asset.img, // Новое поле для фото
+                body: item.body,
+                specs: asset.specs
+            };
+        });
     }
 );
 
@@ -32,9 +53,13 @@ const instrumentsSlice = createSlice({
         clearDetail: (state) => { 
             state.selectedItem = null; 
         },
-        // CREATE
+        // CREATE: добавляем фото по умолчанию для новых машин
         addInstrument: (state, action) => {
-            state.items.unshift(action.payload);
+            const newEntry = {
+                ...action.payload,
+                img: action.payload.img || "https://www.bmw.ru/content/dam/bmw/marketRU/bmw_ru/all-models/m-series/m760e-xdrive/bmw-m760e-xdrive-snapshot-l.png"
+            };
+            state.items.unshift(newEntry);
         },
         // DELETE
         deleteInstrument: (state, action) => {

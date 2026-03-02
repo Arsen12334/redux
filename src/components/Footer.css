@@ -1,57 +1,107 @@
+/* Footer.css - BMW Signature End */
 .bmw-footer {
-    background-color: #f6f6f6;
+    background-color: #f8f8f8;
     color: #000;
-    padding: 60px 10% 30px;
+    padding: 80px 8% 40px; /* Увеличили отступы для "воздуха" */
     font-family: 'Inter', sans-serif;
     border-top: 1px solid #e5e5e5;
-    margin-top: auto; /* Важно: помогает прижаться к низу */
+    margin-top: auto;
+    transition: background-color 0.4s ease;
 }
 
-/* Поддержка темной темы */
+/* Dark Mode Transition */
 .dark .bmw-footer {
-    background-color: #111;
+    background-color: #0a0a0a;
     color: #fff;
-    border-top: 1px solid #222;
+    border-top: 1px solid #1a1a1a;
 }
 
 .footer-container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
 }
 
 .footer-top {
-    display: flex;
-    gap: 100px;
-    margin-bottom: 50px;
+    display: grid;
+    /* Используем гриды вместо флекса для идеального выравнивания */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 60px;
+    margin-bottom: 80px;
 }
 
 .footer-column h4 {
-    font-size: 14px;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2.5px; /* Широкий трекинг — признак люкса */
+    margin-bottom: 30px;
+    font-weight: 600;
+    position: relative;
+}
+
+/* Маленький декоративный штрих под заголовком */
+.footer-column h4::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 20px;
+    height: 1px;
+    background: #0066b1;
 }
 
 .footer-column p {
-    font-size: 13px;
-    margin: 10px 0;
-    opacity: 0.6;
+    font-size: 14px;
+    margin: 15px 0;
+    opacity: 0.5;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block; /* Для корректной трансформации */
+    width: 100%;
 }
 
 .footer-column p:hover {
     opacity: 1;
     color: #0066b1;
+    transform: translateX(5px); /* Тонкий интерактив */
 }
 
+/* Нижняя панель с копирайтом */
 .footer-bottom {
-    border-top: 1px solid #ddd;
-    padding-top: 20px;
-    font-size: 12px;
-    opacity: 0.5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 30px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.4;
 }
 
 .dark .footer-bottom {
-    border-top-color: #333;
+    border-top-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Стилизация социальных иконок или мелких ссылок */
+.footer-legal-links {
+    display: flex;
+    gap: 25px;
+}
+
+.footer-legal-links span {
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.footer-legal-links span:hover {
+    color: #0066b1;
+    opacity: 1;
+}
+
+/* Адаптивность для мобилок */
+@media (max-width: 768px) {
+    .footer-top {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
 }
