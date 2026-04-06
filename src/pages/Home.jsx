@@ -8,6 +8,7 @@ import {
     deleteInstrument, 
     updateInstrument 
 } from "../features/instruments/instrumentsSlice";
+import TodoList from "../components/TodoList"; // 1. ДОБАВЛЕНО: Импорт списка
 import "./Home.css";
 
 const Home = () => {
@@ -161,6 +162,12 @@ const Home = () => {
                     </div>
                 )}
             </section>
+
+            {/* 2. ДОБАВЛЕНО: Секция с твоим TodoList */}
+            <section style={{ paddingBottom: '100px' }}>
+                <TodoList />
+            </section>
+
         </main>
     );
 };
