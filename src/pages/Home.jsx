@@ -6,9 +6,13 @@ import {
     clearDetail, 
     addInstrument, 
     deleteInstrument, 
-    updateInstrument 
+    updateInstrument,
+    // ДОБАВЛЕНО: новые экшены из слайса
+    toggleLike,
+    toggleFavorite,
+    addRating
 } from "../features/instruments/instrumentsSlice";
-import TodoList from "../components/TodoList"; // 1. ДОБАВЛЕНО: Импорт списка
+import TodoList from "../components/TodoList"; 
 import "./Home.css";
 
 const Home = () => {
@@ -65,7 +69,6 @@ const Home = () => {
                         <p className="hero-subtitle" style={{fontSize: '24px', color: '#666'}}>{selectedItem.specs}</p>
                         <p style={{maxWidth: '600px', lineHeight: '1.8', marginTop: '30px'}}>{selectedItem.body}</p>
                     </div>
-                    {/* Фото в детальном просмотре */}
                     <div style={{flex: '1', minWidth: '300px'}}>
                         <img src={selectedItem.img} alt={selectedItem.title} style={{width: '100%', height: 'auto', objectFit: 'contain'}} />
                     </div>
@@ -93,81 +96,78 @@ const Home = () => {
                     padding: '30px',
                     borderRadius: '8px'
                 }}>
-                    <input 
-                        className="bmw-input"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Название (напр. BMW M8)"
-                        style={{padding: '12px', flex: '1', minWidth: '200px'}}
-                    />
-                    <input 
-                        className="bmw-input"
-                        value={engine}
-                        onChange={(e) => setEngine(e.target.value)}
-                        placeholder="Двигатель (Electric/V8)"
-                        style={{padding: '12px', flex: '1', minWidth: '200px'}}
-                    />
-                    <input 
-                        className="bmw-input"
-                        value={power}
-                        onChange={(e) => setPower(e.target.value)}
-                        placeholder="Мощность (hp)"
-                        style={{padding: '12px', width: '130px'}}
-                    />
-                    <button type="submit" className="bmw-action-btn">
-                        СОЗДАТЬ
-                    </button>
+                    <input className="bmw-input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Название (напр. BMW M8)" style={{padding: '12px', flex: '1', minWidth: '200px'}} />
+                    <input className="bmw-input" value={engine} onChange={(e) => setEngine(e.target.value)} placeholder="Двигатель (Electric/V8)" style={{padding: '12px', flex: '1', minWidth: '200px'}} />
+                    <input className="bmw-input" value={power} onChange={(e) => setPower(e.target.value)} placeholder="Мощность (hp)" style={{padding: '12px', width: '130px'}} />
+                    <button type="submit" className="bmw-action-btn">СОЗДАТЬ</button>
                 </form>
 
                 {status === "loading" ? (
                     <div className="loading-spinner" style={{textAlign: 'center', padding: '100px', letterSpacing: '3px'}}>ЗАГРУЗКА...</div>
                 ) : (
                     <div className="models-grid">
-                        {items.map(car => (
-                            <div key={car.id} className="model-card">
-                                <div onClick={() => dispatch(setItemDetail(car))} style={{cursor: 'pointer'}}>
-                                    {/* Блок с изображением */}
-                                    <div className="card-image-container">
-                                        <img src={car.img} alt={car.title} className="card-car-image" />
-                                    </div>
-                                    <h3 className="card-title">{car.title}</h3>
-                                    <p className="card-specs">{car.specs}</p>
-                                </div>
-                                
-                                <div className="card-actions">
-                                    <div style={{display: 'flex', gap: '15px'}}>
-                                        <button 
-                                            onClick={() => dispatch(deleteInstrument(car.id))}
-                                            className="action-link delete-btn"
-                                        >
-                                            УДАЛИТЬ
+                        {items.map(car => {
+                            // ВЫВОД СРЕДНЕЙ ОЦЕНКИ
+                            const ratings = car.ratings || [];
+                            const avgRating = ratings.length > 0 
+                                ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) 
+                                : "0.0";
+
+                            return (
+                                <div key={car.id} className="model-card" style={{ position: 'relative' }}>
+                                    {/* ЛАЙК И ИЗБРАННОЕ */}
+                                    <div style={{ position: 'absolute', top: '15px', right: '15px', display: 'flex', gap: '10px', zIndex: 5 }}>
+                                        <button onClick={() => dispatch(toggleLike(car.id))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px' }}>
+                                            {car.isLiked ? "❤️" : "🤍"}
                                         </button>
-                                        <button 
-                                            onClick={() => handleEdit(car)}
-                                            className="action-link"
-                                            style={{color: '#888', background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px'}}
-                                        >
-                                            ИЗМЕНИТЬ
+                                        <button onClick={() => dispatch(toggleFavorite(car.id))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px' }}>
+                                            {car.isFavorite ? "⭐" : "☆"}
                                         </button>
                                     </div>
-                                    <div 
-                                        onClick={() => dispatch(setItemDetail(car))} 
-                                        className="action-link details-link"
-                                    >
-                                        ДЕТАЛИ →
+
+                                    <div onClick={() => dispatch(setItemDetail(car))} style={{cursor: 'pointer'}}>
+                                        <div className="card-image-container">
+                                            <img src={car.img} alt={car.title} className="card-car-image" />
+                                        </div>
+                                        <h3 className="card-title">{car.title}</h3>
+                                        <p className="card-specs">{car.specs}</p>
+                                    </div>
+
+                                    {/* ДОБАВЛЕНИЕ ОЦЕНОК И СРЕДНИЙ БАЛЛ */}
+                                    <div style={{ padding: '0 20px', marginBottom: '15px' }}>
+                                        <div style={{ fontSize: '13px', color: '#888', marginBottom: '8px' }}>
+                                            Рейтинг: <span style={{ color: '#fff' }}>{avgRating} ★</span>
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '4px' }}>
+                                            {[1, 2, 3, 4, 5].map(num => (
+                                                <button 
+                                                    key={num} 
+                                                    onClick={() => dispatch(addRating({ id: car.id, rating: num }))}
+                                                    style={{ background: '#111', border: '1px solid #333', color: '#666', fontSize: '10px', cursor: 'pointer', padding: '3px 7px' }}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="card-actions">
+                                        <div style={{display: 'flex', gap: '15px'}}>
+                                            <button onClick={() => dispatch(deleteInstrument(car.id))} className="action-link delete-btn">УДАЛИТЬ</button>
+                                            <button onClick={() => handleEdit(car)} className="action-link" style={{color: '#888', background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px'}}>ИЗМЕНИТЬ</button>
+                                        </div>
+                                        <div onClick={() => dispatch(setItemDetail(car))} className="action-link details-link">ДЕТАЛИ →</div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </section>
 
-            {/* 2. ДОБАВЛЕНО: Секция с твоим TodoList */}
             <section style={{ paddingBottom: '100px' }}>
                 <TodoList />
             </section>
-
         </main>
     );
 };

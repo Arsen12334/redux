@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// База данных с реальными изображениями BMW для сопоставления по ID
 const bmwAssets = {
     1: { title: "BMW i4 eDrive40", img: "https://www.bmw.ru/content/dam/bmw/common/all-models/i-series/i4/2021/navigation/bmw-i4-eDrive40-snapshot-l.png", specs: "Electric / 340 hp" },
     2: { title: "BMW iX xDrive50", img: "https://www.bmw.ru/content/dam/bmw/common/all-models/i-series/ix/2021/navigation/bmw-ix-xDrive50-snapshot-l.png", specs: "Electric / 523 hp" },
@@ -21,7 +20,6 @@ export const fetchInstruments = createAsyncThunk(
         await new Promise((resolve) => setTimeout(resolve, 2000));
         
         return data.map(item => {
-            // Берем данные из bmwAssets по ID, если их нет — ставим дефолт
             const asset = bmwAssets[item.id] || { 
                 title: `BMW Series ${item.id}`, 
                 img: "https://www.bmw.ru/content/dam/bmw/common/all-models/i-series/i7/2022/navigation/bmw-i7-sedan-snapshot-l.png",
@@ -31,9 +29,13 @@ export const fetchInstruments = createAsyncThunk(
             return {
                 id: item.id,
                 title: asset.title,
-                img: asset.img, // Новое поле для фото
+                img: asset.img,
                 body: item.body,
-                specs: asset.specs
+                specs: asset.specs,
+                // --- НОВЫЕ ПОЛЯ ---
+                isLiked: false,
+                isFavorite: false,
+                ratings: [] 
             };
         });
     }
@@ -53,26 +55,46 @@ const instrumentsSlice = createSlice({
         clearDetail: (state) => { 
             state.selectedItem = null; 
         },
-        // CREATE: добавляем фото по умолчанию для новых машин
         addInstrument: (state, action) => {
             const newEntry = {
                 ...action.payload,
+                isLiked: false,      // Дефолт для новой записи
+                isFavorite: false,   // Дефолт для новой записи
+                ratings: [],         // Пустой массив оценок
                 img: action.payload.img || "https://www.bmw.ru/content/dam/bmw/marketRU/bmw_ru/all-models/m-series/m760e-xdrive/bmw-m760e-xdrive-snapshot-l.png"
             };
             state.items.unshift(newEntry);
         },
-        // DELETE
         deleteInstrument: (state, action) => {
             state.items = state.items.filter(item => item.id !== action.payload);
             if (state.selectedItem?.id === action.payload) state.selectedItem = null;
         },
-        // UPDATE
         updateInstrument: (state, action) => {
             const index = state.items.findIndex(item => item.id === action.payload.id);
             if (index !== -1) {
                 state.items[index].title = action.payload.title;
                 if (state.selectedItem?.id === action.payload.id) {
                     state.selectedItem.title = action.payload.title;
+                }
+            }
+        },
+        // --- НОВЫЕ РЕДЬЮСЕРЫ ПО ТЗ ---
+        toggleLike: (state, action) => {
+            const item = state.items.find(i => i.id === action.payload);
+            if (item) item.isLiked = !item.isLiked;
+        },
+        toggleFavorite: (state, action) => {
+            const item = state.items.find(i => i.id === action.payload);
+            if (item) item.isFavorite = !item.isFavorite;
+        },
+        addRating: (state, action) => {
+            const { id, rating } = action.payload;
+            const item = state.items.find(i => i.id === id);
+            if (item) {
+                item.ratings.push(rating);
+                // Если машина открыта в деталях — обновляем и там
+                if (state.selectedItem?.id === id) {
+                    state.selectedItem.ratings.push(rating);
                 }
             }
         }
@@ -94,7 +116,11 @@ export const {
     clearDetail, 
     addInstrument, 
     deleteInstrument, 
-    updateInstrument 
+    updateInstrument,
+    // Экспортируем новые функции
+    toggleLike,
+    toggleFavorite,
+    addRating
 } = instrumentsSlice.actions;
 
 export default instrumentsSlice.reducer;
